@@ -6,7 +6,7 @@ create table users (
     email varchar not null,
     password varchar not null,
     created datetime not null,
-    modified timestamp,
+    modified timestamp
 );
 
 drop table if exists user_levels;
