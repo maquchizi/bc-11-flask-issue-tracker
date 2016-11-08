@@ -6,7 +6,7 @@ from werkzeug import generate_password_hash, check_password_hash
 import datetime
 from os import path
 
-# configuration
+# Configuration
 ROOT = path.dirname(path.realpath(__file__))
 DATABASE = path.join(ROOT, "issue_tracker.db")
 SECRET_KEY = 'f0rtkn0x'
@@ -15,11 +15,39 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 
-@app.route('/dashboard')
-def dashboard():
-    if not g.user:
-        return redirect(url_for('login'))
-    return render_template('dashboard.html')
+@app.before_request
+def before_request():
+    '''
+        Check if user is logged in on every request
+    '''
+    g.user = None
+    if 'user_id' in session:
+        g.user = query_db('SELECT * FROM users WHERE user_id = ?',
+                          [session['user_id']], one=True)
+
+
+@app.teardown_request
+def teardown_request(exception):
+    '''
+        Destroy DB connection after every request
+    '''
+    db = getattr(g, 'db', None)
+    if db is not None:
+        db.close()
+
+
+def connect_db():
+    return sqlite3.connect(app.config['DATABASE'])
+
+
+def init_db():
+    '''
+        Initialize the DB when the app if first run
+    '''
+    with closing(connect_db()) as db:
+        with app.open_resource('schema.sql', mode='r') as schema:
+            db.cursor().executescript(schema.read())
+        db.commit()
 
 
 def get_db():
@@ -121,6 +149,7 @@ def login():
         else:
             flash('You were logged in')
             session['user_id'] = user['user_id']
+            session['user_level'] = user['user_level']
             return redirect(url_for('dashboard'))
     return render_template('login.html', error=error)
 
@@ -134,39 +163,30 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.before_request
-def before_request():
+@app.route('/dashboard')
+def dashboard():
+    if not g.user:
+        return redirect(url_for('login'))
     '''
-        Check if user is logged in on every request
+        If the user is a super admin (User Level 1), get all issues
+        If the user is a department admin (User Level 2), get their
+            department issues
+        If the user is a client (User Level 3), get just their raised issues
+        If the user is a support rep (User Level 4), view  issues
+            asigned to them only
+
+        Load the relevant template
     '''
-    g.user = None
-    if 'user_id' in session:
-        g.user = query_db('SELECT * FROM users WHERE user_id = ?',
-                          [session['user_id']], one=True)
-
-
-@app.teardown_request
-def teardown_request(exception):
-    '''
-        Destroy DB connection after every request
-    '''
-    db = getattr(g, 'db', None)
-    if db is not None:
-        db.close()
-
-
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
-
-
-def init_db():
-    '''
-        Initialize the DB when the app if first run
-    '''
-    with closing(connect_db()) as db:
-        with app.open_resource('schema.sql', mode='r') as schema:
-            db.cursor().executescript(schema.read())
-        db.commit()
+    if(g.user == '1'):
+        pass
+    elif(g.user == '2'):
+        pass
+    elif(g.user == '3'):
+        pass
+    elif(g.user == '4'):
+        pass
+    print(g.user)
+    return render_template('dashboard.html')
 
 
 if __name__ == "__main__":
