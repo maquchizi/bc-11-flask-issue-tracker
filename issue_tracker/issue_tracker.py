@@ -1,10 +1,10 @@
-import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-    render_template, flash, _app_ctx_stack
-from contextlib import closing
+    render_template, flash
 from werkzeug import generate_password_hash, check_password_hash
 import datetime
 import config
+from util import *
+from issues_model import *
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -31,46 +31,11 @@ def teardown_request(exception):
         db.close()
 
 
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
-
-
-def init_db():
-    '''
-        Initialize the DB when the app is first run
-    '''
-    with closing(connect_db()) as db:
-        with app.open_resource('schema.sql', mode='r') as schema:
-            db.cursor().executescript(schema.read())
-        db.commit()
-
-
 @app.cli.command('initdb')
 def initdb_command():
     """Creates the database tables."""
     init_db()
-    print('Initialized the database.')
-
-
-def get_db():
-    """
-        Opens a new database connection if there is none yet for the current
-        application context.
-    """
-    top = _app_ctx_stack.top
-    if not hasattr(top, 'sqlite_db'):
-        top.sqlite_db = sqlite3.connect(app.config['DATABASE'])
-        top.sqlite_db.row_factory = sqlite3.Row
-    return top.sqlite_db
-
-
-def query_db(query, args=(), one=False):
-    """
-        Queries the database and returns a list of dictionaries.
-    """
-    cur = get_db().execute(query, args)
-    response = cur.fetchall()
-    return (response[0] if response else None) if one else response
+    print('Initialized the database')
 
 
 def user_exists(email):
@@ -84,70 +49,70 @@ def user_exists(email):
     return response[0] if response else False
 
 
-def get_all_issues():
-    '''
-        Called when super admin logs in
-        Get all issues on the system
-    '''
-    response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
-        istbl.description,istbl.created,usrtbl.forename AS raised_forename,
-        usrtbl.surname AS raised_surname
-        FROM issues AS istbl INNER JOIN users AS usrtbl ON
-        istbl.raised_by = usrtbl.user_id''')
-    return response if response else False
+# def get_all_issues():
+#     '''
+#         Called when super admin logs in
+#         Get all issues on the system
+#     '''
+#     response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
+#         istbl.description,istbl.created,usrtbl.forename AS raised_forename,
+#         usrtbl.surname AS raised_surname
+#         FROM issues AS istbl INNER JOIN users AS usrtbl ON
+#         istbl.raised_by = usrtbl.user_id''')
+#     return response if response else False
 
 
-def get_department_issues(user_id):
-    '''
-        Called when a department admin logs in
-        Get all issues tagged for their department
-    '''
-    department_id = is_department_admin(user_id)
-    if department_id:
-        response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
-            istbl.description,istbl.created,usrtbl.forename AS raised_forename,
-            usrtbl.surname AS raised_surname
-            FROM issues AS istbl INNER JOIN users AS usrtbl ON
-            istbl.raised_by = usrtbl.user_id WHERE department = ?''',
-                            [department_id])
-        return response if response else False
-    else:
-        return False
+# def get_department_issues(user_id):
+#     '''
+#         Called when a department admin logs in
+#         Get all issues tagged for their department
+#     '''
+#     department_id = is_department_admin(user_id)
+#     if department_id:
+#         response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
+#             istbl.description,istbl.created,usrtbl.forename AS raised_forename,
+#             usrtbl.surname AS raised_surname
+#             FROM issues AS istbl INNER JOIN users AS usrtbl ON
+#             istbl.raised_by = usrtbl.user_id WHERE department = ?''',
+#                             [department_id])
+#         return response if response else False
+#     else:
+#         return False
 
 
-def get_my_issues(client_id):
-    '''
-        Called when a client logs in
-        Get all issues client raised
-    '''
-    response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
-            istbl.description,istbl.created,usrtbl.forename AS raised_forename,
-            usrtbl.surname AS raised_surname
-            FROM issues AS istbl INNER JOIN users AS usrtbl ON
-            istbl.raised_by = usrtbl.user_id WHERE department = ?''',
-                        [client_id])
-    return response if response else False
+# def get_my_issues(client_id):
+#     '''
+#         Called when a client logs in
+#         Get all issues client raised
+#     '''
+#     response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
+#             istbl.description,istbl.created,usrtbl.forename AS raised_forename,
+#             usrtbl.surname AS raised_surname
+#             FROM issues AS istbl INNER JOIN users AS usrtbl ON
+#             istbl.raised_by = usrtbl.user_id WHERE department = ?''',
+#                         [client_id])
+#     return response if response else False
 
 
-def get_assigned_issues(rep_id):
-    '''
-        Called when a support rep logs in
-        Get all issues asisgned to rep
-    '''
-    response = query_db('''SELECT * FROM issues WHERE assigned_to = ?''',
-                        [rep_id])
-    return response if response else False
+# def get_assigned_issues(rep_id):
+#     '''
+#         Called when a support rep logs in
+#         Get all issues asisgned to rep
+#     '''
+#     response = query_db('''SELECT * FROM issues WHERE assigned_to = ?''',
+#                         [rep_id])
+#     return response if response else False
 
 
-def is_department_admin(user_id):
-    '''
-        Check if a user is a department admin
-        If they are, return the department_id
-    '''
-    response = query_db('''SELECT department_id FROM departments
-                        WHERE department_admin = ?''',
-                        [user_id], one=True)
-    return response[0] if response else False
+# def is_department_admin(user_id):
+#     '''
+#         Check if a user is a department admin
+#         If they are, return the department_id
+#     '''
+#     response = query_db('''SELECT department_id FROM departments
+#                         WHERE department_admin = ?''',
+#                         [user_id], one=True)
+#     return response[0] if response else False
 
 
 @app.route('/register', methods=['GET', 'POST'])
