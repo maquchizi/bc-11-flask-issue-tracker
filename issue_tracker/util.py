@@ -40,3 +40,14 @@ def query_db(query, args=(), one=False):
     cur = get_db().execute(query, args)
     response = cur.fetchall()
     return (response[0] if response else None) if one else response
+
+
+def user_exists(email):
+    """
+        Check if a user exists given their email address
+        If they do, return their user_id
+        If not return False
+    """
+    response = query_db('''SELECT user_id FROM users WHERE email = ?''',
+                        [email], one=True)
+    return response[0] if response else False
