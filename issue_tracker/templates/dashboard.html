@@ -5,4 +5,23 @@
 <div>
     This is the dashboard
 </div>
+<table>
+    <caption>Issues</caption>
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th>Raised By</th>
+            <th>Raised On</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for issue in issues %}
+        <tr>
+            <td>{{ issue.description }}</td>
+            <td>{{ issue.raised_by }}</td>
+            <td>{{ issue.created }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

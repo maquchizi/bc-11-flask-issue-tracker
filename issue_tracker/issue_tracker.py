@@ -4,15 +4,10 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from contextlib import closing
 from werkzeug import generate_password_hash, check_password_hash
 import datetime
-from os import path
-
-# Configuration
-ROOT = path.dirname(path.realpath(__file__))
-DATABASE = path.join(ROOT, "issue_tracker.db")
-SECRET_KEY = 'f0rtkn0x'
+import config
 
 app = Flask(__name__)
-app.config.from_object(__name__)
+app.config.from_object(config)
 
 
 @app.before_request
@@ -42,7 +37,7 @@ def connect_db():
 
 def init_db():
     '''
-        Initialize the DB when the app if first run
+        Initialize the DB when the app is first run
     '''
     with closing(connect_db()) as db:
         with app.open_resource('schema.sql', mode='r') as schema:
@@ -80,6 +75,60 @@ def user_exists(email):
     response = query_db('SELECT user_id FROM users WHERE email = ?',
                         [email], one=True)
     return response[0] if response else False
+
+
+def get_all_issues():
+    '''
+        Called when super admin logs in
+        Get all issues on the system
+    '''
+    response = query_db('SELECT * FROM issues')
+    return response if response else False
+
+
+def get_department_issues(admin_id):
+    '''
+        Called when a department admin logs in
+        Get all issues tagged for their department
+    '''
+    department_id = is_department_admin(admin_id)
+    if department_id:
+        response = query_db('SELECT * FROM issues WHERE department = ?',
+                            department_id)
+        return response if response else False
+    else:
+        return False
+
+
+def get_my_issues(client_id):
+    '''
+        Called when a client logs in
+        Get all issues client raised
+    '''
+    response = query_db('SELECT * FROM issues WHERE raised_by = ?',
+                        client_id)
+    return response if response else False
+
+
+def get_assigned_issues(rep_id):
+    '''
+        Called when a support rep logs in
+        Get all issues asisgned to rep
+    '''
+    response = query_db('SELECT * FROM issues WHERE assigned_to = ?',
+                        rep_id)
+    return response if response else False
+
+
+def is_department_admin(user_id):
+    '''
+        Check if a user is a department admin
+        If they are, return the department_id
+    '''
+    response = query_db('''SELECT department_id FROM departments
+                        WHERE department_admin = ?''',
+                        user_id, one=True)
+    return response if response else False
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -177,16 +226,17 @@ def dashboard():
 
         Load the relevant template
     '''
-    if(g.user == '1'):
+    issues = None
+    if(g.user['user_level'] == 1):
+        issues = get_all_issues()
+    elif(g.user['user_level'] == 2):
+        issues = get_department_issues(g.user['user_level'])
+    elif(g.user['user_level'] == 3):
         pass
-    elif(g.user == '2'):
-        pass
-    elif(g.user == '3'):
-        pass
-    elif(g.user == '4'):
+    elif(g.user['user_level'] == 4):
         pass
     print(g.user)
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', issues=issues)
 
 
 if __name__ == "__main__":
