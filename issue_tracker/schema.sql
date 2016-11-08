@@ -22,7 +22,7 @@ CREATE TABLE issues (
     description TEXT,
     department INTEGER,
     assigned_to INTEGER,
-    status INTEGER,
+    status INTEGER DEFAULT 1,
     priority INTEGER,
     raised_by INTEGER,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,

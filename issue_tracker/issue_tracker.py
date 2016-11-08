@@ -128,7 +128,7 @@ def get_assigned_issues(rep_id):
         Get all issues asisgned to rep
     '''
     response = query_db('''SELECT * FROM issues WHERE assigned_to = ?''',
-                        rep_id)
+                        [rep_id])
     return response if response else False
 
 
@@ -241,14 +241,15 @@ def dashboard():
         Load the relevant template
     '''
     issues = None
+    user_id = g.user['user_id']
     if(g.user['user_level'] == 1):
         issues = get_all_issues()
     elif(g.user['user_level'] == 2):
-        issues = get_department_issues(g.user['user_id'])
+        issues = get_department_issues(user_id)
     elif(g.user['user_level'] == 3):
-        pass
+        issues = get_my_issues(user_id)
     elif(g.user['user_level'] == 4):
-        pass
+        issues = get_assigned_issues(user_id)
     return render_template('dashboard.html', issues=issues)
 
 
