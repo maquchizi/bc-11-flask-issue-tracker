@@ -45,6 +45,13 @@ def init_db():
         db.commit()
 
 
+@app.cli.command('initdb')
+def initdb_command():
+    """Creates the database tables."""
+    init_db()
+    print('Initialized the database.')
+
+
 def get_db():
     """
         Opens a new database connection if there is none yet for the current
@@ -139,6 +146,7 @@ def is_department_admin(user_id):
 def register():
     """
         Register a new user
+        User defaults to Client user level
     """
     if g.user:
         return redirect(url_for('dashboard'))
@@ -169,7 +177,7 @@ def register():
                                          request.form['email'],
                                          generate_password_hash(
                                              request.form['password']),
-                                         1, datetime.datetime.utcnow(),
+                                         3, datetime.datetime.utcnow(),
                                          datetime.datetime.utcnow()])
             db.commit()
             # Send flash message
@@ -244,6 +252,11 @@ def dashboard():
     elif(g.user['user_level'] == 4):
         pass
     return render_template('dashboard.html', issues=issues)
+
+
+@app.route('/issues/raise')
+def raise_issue():
+    return render_template('raise_issue.html')
 
 
 @app.route('/issues/edit/<issue_id>')

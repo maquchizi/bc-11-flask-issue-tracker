@@ -1,9 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
 <h2>Dashboard</h2>
-{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+{% if issues %}
 <table>
-    <caption>Issues</caption>
     <thead>
         <tr>
             <th>Description</th>
@@ -13,6 +12,7 @@
         </tr>
     </thead>
     <tbody>
+
         {% for issue in issues %}
         <tr>
             <td>{{ issue.description }}</td>
@@ -22,6 +22,10 @@
             <td><a href="/issues/delete/{{ issue.issue_id }}">Delete</a></td>
         </tr>
         {% endfor %}
+
     </tbody>
 </table>
+{% else %}
+    <p>You haven't raised any issues. Maybe you should <a href="{{ url_for('raise_issue') }}">raise one</a></p>
+{% endif %}
 {% endblock %}

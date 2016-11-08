@@ -95,3 +95,4 @@ ENV/
 .atom
 *.sublime-*
 *.db
+*.db-*
