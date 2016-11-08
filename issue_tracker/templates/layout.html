@@ -11,11 +11,12 @@
     <a href="{{ url_for('users') }}">All Users</a>
     <a href="{{ url_for('add_user') }}">Add User</a>
     <a href="{{ url_for('logout') }}">Log Out</a>
+    {% elif session.user_level and session.user_level == 2 %}
+    <a href="{{ url_for('dashboard') }}">My Department Issues</a>
+    <a href="{{ url_for('logout') }}">Log Out</a>
     {% elif session.user_level and session.user_level == 3 %}
-    <a href="{{ url_for('dashboard') }}">All Issues</a>
+    <a href="{{ url_for('dashboard') }}">My Issues</a>
     <a href="{{ url_for('raise_issue') }}">Raise Issue</a>
-    <a href="{{ url_for('users') }}">All Users</a>
-    <a href="{{ url_for('add_user') }}">Add User</a>
     <a href="{{ url_for('logout') }}">Log Out</a>
     {% endif %}
   </div>

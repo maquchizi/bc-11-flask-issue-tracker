@@ -97,15 +97,16 @@ def get_all_issues():
     return response if response else False
 
 
-def get_department_issues(admin_id):
+def get_department_issues(user_id):
     '''
         Called when a department admin logs in
         Get all issues tagged for their department
     '''
-    department_id = is_department_admin(admin_id)
+    department_id = is_department_admin(user_id)
+    print department_id
     if department_id:
         response = query_db('SELECT * FROM issues WHERE department = ?',
-                            department_id)
+                            [department_id])
         return response if response else False
     else:
         return False
@@ -117,7 +118,7 @@ def get_my_issues(client_id):
         Get all issues client raised
     '''
     response = query_db('''SELECT * FROM issues WHERE raised_by = ?''',
-                        client_id)
+                        [client_id])
     return response if response else False
 
 
@@ -138,8 +139,8 @@ def is_department_admin(user_id):
     '''
     response = query_db('''SELECT department_id FROM departments
                         WHERE department_admin = ?''',
-                        user_id, one=True)
-    return response if response else False
+                        [user_id], one=True)
+    return response[0] if response else False
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -243,10 +244,7 @@ def dashboard():
     if(g.user['user_level'] == 1):
         issues = get_all_issues()
     elif(g.user['user_level'] == 2):
-        user_id = int(g.user['user_id'])
-        # print g.user['user_id']
-        # print g.user['user_level']
-        issues = get_department_issues(user_id)
+        issues = get_department_issues(g.user['user_id'])
     elif(g.user['user_level'] == 3):
         pass
     elif(g.user['user_level'] == 4):
