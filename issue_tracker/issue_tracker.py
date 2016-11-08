@@ -213,6 +213,7 @@ def logout():
         Logs a user out
     """
     session.pop('user_id', None)
+    session.pop('user_level', None)
     return redirect(url_for('login'))
 
 
@@ -234,12 +235,14 @@ def dashboard():
     if(g.user['user_level'] == 1):
         issues = get_all_issues()
     elif(g.user['user_level'] == 2):
-        issues = get_department_issues(g.user['user_level'])
+        user_id = int(g.user['user_id'])
+        # print g.user['user_id']
+        # print g.user['user_level']
+        issues = get_department_issues(user_id)
     elif(g.user['user_level'] == 3):
         pass
     elif(g.user['user_level'] == 4):
         pass
-    print(g.user)
     return render_template('dashboard.html', issues=issues)
 
 
@@ -253,17 +256,28 @@ def delete_issue(issue_id):
     pass
 
 
+@app.route('/users')
+def users():
+    users = query_db('''SELECT usrtbl.user_id,usrtbl.forename,usrtbl.surname,
+        usrtbl.email,usrtbl.created,
+        usrtbl.user_level,ultbl.user_level_name FROM users as usrtbl
+        INNER JOIN user_levels AS ultbl
+        ON usrtbl.user_level = ultbl.user_level_id''')
+    return render_template('users.html', users=users)
+
+
 @app.route('/users/add', methods=['GET', 'POST'])
 def add_user():
     errors = []
     if request.method == 'POST':
-        print request.form
         if not request.form['forename']:
             errors.append('You have to enter a forename')
         if not request.form['surname']:
             errors.append('You have to enter a surname')
         if not request.form['email']:
             errors.append('You have to enter a email address')
+        if not request.form['user_level']:
+            errors.append('You have to enter a user level')
         elif not request.form['email'] or \
                 '@' not in request.form['email']:
             errors.append('You have to enter a valid email address')
@@ -283,20 +297,51 @@ def add_user():
                                          request.form['email'],
                                          generate_password_hash(
                                              request.form['password']),
-                                         1, datetime.datetime.utcnow(),
+                                         request.form['user_level'],
+                                         datetime.datetime.utcnow(),
                                          datetime.datetime.utcnow()])
             db.commit()
             # Send flash message
             flash('You have added a new user')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('users'))
     user_levels = query_db('''SELECT * FROM user_levels''')
     return render_template('add_user.html',
                            user_levels=user_levels, errors=errors)
 
 
-@app.route('/users/edit/<user_id>')
+@app.route('/users/edit/<user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
-    pass
+    errors = []
+    if request.method == 'POST':
+        if not request.form['forename']:
+            errors.append('You have to enter a forename')
+        if not request.form['surname']:
+            errors.append('You have to enter a surname')
+        if not request.form['email']:
+            errors.append('You have to enter a email address')
+        if not request.form['user_level']:
+            errors.append('You have to enter a user level')
+        elif not request.form['email'] or \
+                '@' not in request.form['email']:
+            errors.append('You have to enter a valid email address')
+        else:
+            db = get_db()
+            db.execute('''UPDATE users SET
+              forename = ?, surname = ?, email = ?, user_level = ?,
+              modified = ? WHERE user_id = ?''',
+                       [request.form['forename'],
+                        request.form['surname'], request.form['email'],
+                        request.form['user_level'],
+                        datetime.datetime.utcnow(), user_id])
+            db.commit()
+            # Send flash message
+            flash('You have updated the user details')
+            return redirect(url_for('users'))
+    user_levels = query_db('''SELECT * FROM user_levels''')
+    user = query_db('''SELECT * FROM users as usrtbl WHERE user_id = ?''',
+                    user_id, one=True)
+    return render_template('edit_user.html', user=user,
+                           user_levels=user_levels, errors=errors)
 
 
 @app.route('/users/delete/<user_id>')

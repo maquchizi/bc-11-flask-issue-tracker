@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Edit User</h2>
+{% for error in errors %}<p class=error><strong>Error:</strong> {{ error }}{% endfor %}
+<form action="{{ url_for('edit_user', user_id=user['user_id']) }}" method=post>
+    <div>
+        <div>
+            <label>Forename:<input type="text" name="forename" value="{{ user['forename'] or request.form['forename'] }}"></label>
+        </div>
+        <div>
+            <label>Surname:<input type="text" name="surname" value="{{ user['surname'] or request.form['surname'] }}"></label>
+        </div>
+        <div>
+            <label>Email:<input type="text" name="email" value="{{ user['email'] or request.form['email'] }}"></label>
+        </div>
+       <!--  <div>
+            <label>Change Password:<input type="password" name="password" value="{{ request.form['password'] }}"></label>
+        </div>
+        <div>
+            <label>Confirm New Password:<input type="password" name="confirm_password" value="{{ request.form['confirm_password'] }}"></label>
+        </div> -->
+        <div>
+            <label for="user_level">User Level</label>
+            <select name="user_level">
+                <option value=""></option>
+                {% for user_level in user_levels %}
+                    {% if user_level.user_level_id == user['user_level'] %}
+                        <option value="{{ user_level.user_level_id }}" selected>{{ user_level.user_level_name }}</option>
+                    {% else %}
+                        <option value="{{ user_level.user_level_id }}">{{ user_level.user_level_name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+        </div>
+        <div>
+            <input type=submit value="Edit User">
+        </div>
+    </div>
+</form>
+{% endblock %}
