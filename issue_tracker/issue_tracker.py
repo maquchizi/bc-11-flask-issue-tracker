@@ -253,9 +253,35 @@ def dashboard():
     return render_template('dashboard.html', issues=issues)
 
 
-@app.route('/issues/raise')
+@app.route('/issues/raise', methods=['GET', 'POST'])
 def raise_issue():
-    return render_template('raise_issue.html')
+    errors = []
+    if request.method == 'POST':
+        if not request.form['description']:
+            errors.append('You have to enter a description')
+        if not request.form['priority']:
+            errors.append('You have to select a priority')
+        if not request.form['department']:
+            errors.append('You have to select a department')
+        else:
+            db = get_db()
+            db.execute('''INSERT INTO issues (
+              description, priority, department, raised_by, created, modified)
+              VALUES (?, ?, ?, ?, ?, ?)''',
+                       [request.form['description'],
+                        request.form['priority'],
+                        request.form['department'],
+                        g.user['user_id'],
+                        datetime.datetime.utcnow(),
+                        datetime.datetime.utcnow()])
+            db.commit()
+            # Send flash message
+            flash('You have raised a new issue')
+            return redirect(url_for('dashboard'))
+    priorities = query_db('''SELECT * FROM issue_priorities''')
+    departments = query_db('''SELECT * FROM departments''')
+    return render_template('raise_issue.html', priorities=priorities,
+                           departments=departments, errors=errors)
 
 
 @app.route('/issues/edit/<issue_id>')

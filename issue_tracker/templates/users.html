@@ -14,7 +14,7 @@
     <tbody>
         {% for user in users %}
         <tr>
-            <td>{{ user.forename + user.surname }}</td>
+            <td>{{ user.forename +' '+ user.surname }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.created }}</td>
             <td>{{ user.user_level_name }}</td>
