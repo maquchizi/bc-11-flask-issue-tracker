@@ -24,8 +24,8 @@ def dashboard():
 
 def get_db():
     """
-    Opens a new database connection if there is none yet for the current
-    application context.
+        Opens a new database connection if there is none yet for the current
+        application context.
     """
     top = _app_ctx_stack.top
     if not hasattr(top, 'sqlite_db'):
@@ -35,22 +35,30 @@ def get_db():
 
 
 def query_db(query, args=(), one=False):
-    """Queries the database and returns a list of dictionaries."""
+    """
+        Queries the database and returns a list of dictionaries.
+    """
     cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    return (rv[0] if rv else None) if one else rv
+    response = cur.fetchall()
+    return (response[0] if response else None) if one else response
 
 
-def get_user_id(email):
-    """Convenience method to look up the id for a email."""
-    rv = query_db('select user_id from users where email = ?',
-                  [email], one=True)
-    return rv[0] if rv else None
+def user_exists(email):
+    """
+        Check if a user exists given their email address
+        If they do, return their user_id
+        If not return False
+    """
+    response = query_db('SELECT user_id FROM users WHERE email = ?',
+                        [email], one=True)
+    return response[0] if response else False
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """Registers the user."""
+    """
+        Register a new user
+    """
     if g.user:
         return redirect(url_for('dashboard'))
     error = None
@@ -68,18 +76,20 @@ def register():
             error = 'You have to enter a password'
         elif request.form['password'] != request.form['confirm_password']:
             error = 'The two passwords do not match'
-        elif get_user_id(request.form['email']) is not None:
-            error = 'The email is already taken'
+        elif user_exists(request.form['email']):
+            error = 'That email address is already taken'
         else:
             db = get_db()
             db.execute('''INSERT INTO users (
-              forename, surname, email, password, created) VALUES
-              (?, ?, ?, ?, ?)''', [request.form['forename'],
-                                   request.form['surname'],
-                                   request.form['email'],
-                                   generate_password_hash(
-                                       request.form['password']),
-                                   datetime.datetime.utcnow()])
+              forename, surname, email, password, user_level,
+              created, modified) VALUES
+              (?, ?, ?, ?, ?, ?, ?)''', [request.form['forename'],
+                                         request.form['surname'],
+                                         request.form['email'],
+                                         generate_password_hash(
+                                             request.form['password']),
+                                         1, datetime.datetime.utcnow(),
+                                         datetime.datetime.utcnow()])
             db.commit()
             # Send flash message
             flash('You were successfully registered and can login now')
@@ -89,12 +99,14 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Logs the user in."""
+    """
+        Logs the user in
+    """
     if g.user:
         return redirect(url_for('dashboard'))
     error = None
     if request.method == 'POST':
-        user = query_db('''select * from users where
+        user = query_db('''SELECT * FROM users WHERE
             email = ?''', [request.form['email']], one=True)
         if not request.form['email']:
             error = 'You have to enter a email address'
@@ -115,23 +127,29 @@ def login():
 
 @app.route('/logout')
 def logout():
-    """Logs the user out."""
+    """
+        Logs a user out
+    """
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
 
 @app.before_request
 def before_request():
-    ''' Check if user is logged in on every request '''
+    '''
+        Check if user is logged in on every request
+    '''
     g.user = None
     if 'user_id' in session:
-        g.user = query_db('select * from users where user_id = ?',
+        g.user = query_db('SELECT * FROM users WHERE user_id = ?',
                           [session['user_id']], one=True)
 
 
 @app.teardown_request
 def teardown_request(exception):
-    ''' Destroy DB connection after every request '''
+    '''
+        Destroy DB connection after every request
+    '''
     db = getattr(g, 'db', None)
     if db is not None:
         db.close()
@@ -142,7 +160,9 @@ def connect_db():
 
 
 def init_db():
-    '''Initialize the DB when the app if first run'''
+    '''
+        Initialize the DB when the app if first run
+    '''
     with closing(connect_db()) as db:
         with app.open_resource('schema.sql', mode='r') as schema:
             db.cursor().executescript(schema.read())
