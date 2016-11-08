@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Add User</h2>
+{% for error in errors %}<p class=error><strong>Error:</strong> {{ error }}{% endfor %}
+<form action="{{ url_for('add_user') }}" method=post>
+    <div>
+        <div>
+            <label>Forename:<input type="text" name="forename" value="{{ request.form['forename'] }}"></label>
+        </div>
+        <div>
+            <label>Surname:<input type="text" name="surname" value="{{ request.form['surname'] }}"></label>
+        </div>
+        <div>
+            <label>Email:<input type="text" name="email" value="{{ request.form['email'] }}"></label>
+        </div>
+        <div>
+            <label>Password:<input type="password" name="password" value="{{ request.form['password'] }}"></label>
+        </div>
+        <div>
+            <label>Confirm Password:<input type="password" name="confirm_password" value="{{ request.form['confirm_password'] }}"></label>
+        </div>
+        <div>
+            <label for="user_level">User Level</label>
+            <select name="user_level">
+                <option value=""></option>
+                {% for user_level in user_levels %}
+                <option value="{{ user_level.user_level_id }}">{{ user_level.user_level_name }}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+        <div>
+            <input type=submit value="Add User">
+        </div>
+    </div>
+</form>
+{% endblock %}

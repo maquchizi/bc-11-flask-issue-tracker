@@ -72,7 +72,7 @@ def user_exists(email):
         If they do, return their user_id
         If not return False
     """
-    response = query_db('SELECT user_id FROM users WHERE email = ?',
+    response = query_db('''SELECT user_id FROM users WHERE email = ?''',
                         [email], one=True)
     return response[0] if response else False
 
@@ -82,7 +82,11 @@ def get_all_issues():
         Called when super admin logs in
         Get all issues on the system
     '''
-    response = query_db('SELECT * FROM issues')
+    response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
+        istbl.description,istbl.created,usrtbl.forename AS raised_forename,
+        usrtbl.surname AS raised_surname
+        FROM issues AS istbl INNER JOIN users AS usrtbl ON
+        istbl.raised_by = usrtbl.user_id''')
     return response if response else False
 
 
@@ -105,7 +109,7 @@ def get_my_issues(client_id):
         Called when a client logs in
         Get all issues client raised
     '''
-    response = query_db('SELECT * FROM issues WHERE raised_by = ?',
+    response = query_db('''SELECT * FROM issues WHERE raised_by = ?''',
                         client_id)
     return response if response else False
 
@@ -115,7 +119,7 @@ def get_assigned_issues(rep_id):
         Called when a support rep logs in
         Get all issues asisgned to rep
     '''
-    response = query_db('SELECT * FROM issues WHERE assigned_to = ?',
+    response = query_db('''SELECT * FROM issues WHERE assigned_to = ?''',
                         rep_id)
     return response if response else False
 
@@ -237,6 +241,67 @@ def dashboard():
         pass
     print(g.user)
     return render_template('dashboard.html', issues=issues)
+
+
+@app.route('/issues/edit/<issue_id>')
+def edit_issue(issue_id):
+    pass
+
+
+@app.route('/issues/delete/<issue_id>')
+def delete_issue(issue_id):
+    pass
+
+
+@app.route('/users/add', methods=['GET', 'POST'])
+def add_user():
+    errors = []
+    if request.method == 'POST':
+        print request.form
+        if not request.form['forename']:
+            errors.append('You have to enter a forename')
+        if not request.form['surname']:
+            errors.append('You have to enter a surname')
+        if not request.form['email']:
+            errors.append('You have to enter a email address')
+        elif not request.form['email'] or \
+                '@' not in request.form['email']:
+            errors.append('You have to enter a valid email address')
+        elif not request.form['password']:
+            errors.append('You have to enter a password')
+        elif request.form['password'] != request.form['confirm_password']:
+            errors.append('The two passwords do not match')
+        elif user_exists(request.form['email']):
+            errors.append('That email address is already taken')
+        else:
+            db = get_db()
+            db.execute('''INSERT INTO users (
+              forename, surname, email, password, user_level,
+              created, modified) VALUES
+              (?, ?, ?, ?, ?, ?, ?)''', [request.form['forename'],
+                                         request.form['surname'],
+                                         request.form['email'],
+                                         generate_password_hash(
+                                             request.form['password']),
+                                         1, datetime.datetime.utcnow(),
+                                         datetime.datetime.utcnow()])
+            db.commit()
+            # Send flash message
+            flash('You have added a new user')
+            return redirect(url_for('dashboard'))
+    user_levels = query_db('''SELECT * FROM user_levels''')
+    return render_template('add_user.html',
+                           user_levels=user_levels, errors=errors)
+
+
+@app.route('/users/edit/<user_id>')
+def edit_user(user_id):
+    pass
+
+
+@app.route('/users/delete/<user_id>')
+def delete_user(user_id):
+    pass
 
 
 if __name__ == "__main__":

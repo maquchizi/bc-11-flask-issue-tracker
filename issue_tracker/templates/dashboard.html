@@ -2,9 +2,6 @@
 {% block body %}
 <h2>Dashboard</h2>
 {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-<div>
-    This is the dashboard
-</div>
 <table>
     <caption>Issues</caption>
     <thead>
@@ -12,14 +9,17 @@
             <th>Description</th>
             <th>Raised By</th>
             <th>Raised On</th>
+            <th colspan="2">Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for issue in issues %}
         <tr>
             <td>{{ issue.description }}</td>
-            <td>{{ issue.raised_by }}</td>
+            <td>{{ issue.raised_forename }}</td>
             <td>{{ issue.created }}</td>
+            <td><a href="/issues/edit/{{ issue.issue_id }}">Edit</a></td>
+            <td><a href="/issues/delete/{{ issue.issue_id }}">Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>
