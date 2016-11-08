@@ -16,7 +16,7 @@
         {% for issue in issues %}
         <tr>
             <td>{{ issue.description }}</td>
-            <td>{{ issue.raised_forename }}</td>
+            <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
             <td>{{ issue.created }}</td>
             <td><a href="/issues/edit/{{ issue.issue_id }}">Edit</a></td>
             <td><a href="/issues/delete/{{ issue.issue_id }}">Delete</a></td>
