@@ -3,7 +3,7 @@
 <div class=page>
   <h1>Issue Tracker</h1>
   <div class=metanav>
-    {% if not session.logged_in %}
+    {% if not session.user_id %}
     <a href="{{ url_for('login') }}">log in</a>
     {% else %}
     <a href="{{ url_for('logout') }}">log out</a>

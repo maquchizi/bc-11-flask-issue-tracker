@@ -15,9 +15,11 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 
-@app.route("/dashboard")
+@app.route('/dashboard')
 def dashboard():
-    return "Hello Dashboard!!"
+    if not g.user:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html')
 
 
 def get_db():
@@ -46,7 +48,7 @@ def get_user_id(email):
     return rv[0] if rv else None
 
 
-@app.route("/register", methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     """Registers the user."""
     if g.user:
@@ -85,7 +87,7 @@ def register():
     return render_template('register.html', error=error)
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     """Logs the user in."""
     if g.user:
@@ -109,6 +111,13 @@ def login():
             session['user_id'] = user['user_id']
             return redirect(url_for('dashboard'))
     return render_template('login.html', error=error)
+
+
+@app.route('/logout')
+def logout():
+    """Logs the user out."""
+    session.pop('user_id', None)
+    return redirect(url_for('login'))
 
 
 @app.before_request
