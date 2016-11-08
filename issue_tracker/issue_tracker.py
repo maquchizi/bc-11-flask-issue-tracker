@@ -2,21 +2,22 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
     render_template, flash, _app_ctx_stack
 from contextlib import closing
-from werkzeug import generate_password_hash
+from werkzeug import generate_password_hash, check_password_hash
 import datetime
 from os import path
 
 # configuration
 ROOT = path.dirname(path.realpath(__file__))
 DATABASE = path.join(ROOT, "issue_tracker.db")
+SECRET_KEY = 'f0rtkn0x'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 
-@app.route("/hello")
-def hello():
-    return "Hello World!"
+@app.route("/dashboard")
+def dashboard():
+    return "Hello Dashboard!!"
 
 
 def get_db():
@@ -49,7 +50,7 @@ def get_user_id(email):
 def register():
     """Registers the user."""
     if g.user:
-        return redirect(url_for('hello'))
+        return redirect(url_for('dashboard'))
     error = None
     if request.method == 'POST':
         if not request.form['forename']:
@@ -57,7 +58,7 @@ def register():
         if not request.form['surname']:
             error = 'You have to enter a surname'
         if not request.form['email']:
-            error = 'You have to enter a email'
+            error = 'You have to enter a email address'
         elif not request.form['email'] or \
                 '@' not in request.form['email']:
             error = 'You have to enter a valid email address'
@@ -80,13 +81,34 @@ def register():
             db.commit()
             # Send flash message
             flash('You were successfully registered and can login now')
-            return redirect(url_for('hello'))
+            return redirect(url_for('dashboard'))
     return render_template('register.html', error=error)
 
 
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=['GET', 'POST'])
 def login():
-    pass
+    """Logs the user in."""
+    if g.user:
+        return redirect(url_for('dashboard'))
+    error = None
+    if request.method == 'POST':
+        user = query_db('''select * from users where
+            email = ?''', [request.form['email']], one=True)
+        if not request.form['email']:
+            error = 'You have to enter a email address'
+        elif not request.form['email'] or \
+                '@' not in request.form['email']:
+            error = 'You have to enter a valid email address'
+        elif not request.form['password']:
+            error = 'You have to enter a password'
+        elif user is None or not check_password_hash(user['password'],
+                                                     request.form['password']):
+            error = 'Invalid credentials'
+        else:
+            flash('You were logged in')
+            session['user_id'] = user['user_id']
+            return redirect(url_for('dashboard'))
+    return render_template('login.html', error=error)
 
 
 @app.before_request
