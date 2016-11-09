@@ -48,7 +48,7 @@ def get_my_issues(client_id):
             FROM issues AS istbl INNER JOIN users AS usrtbl ON
             istbl.raised_by = usrtbl.user_id
             INNER JOIN issue_status AS isstbl ON
-            istbl.status = isstbl.issue_status_id WHERE department = ?''',
+            istbl.status = isstbl.issue_status_id WHERE raised_by = ?''',
                         [client_id])
     return response if response else False
 
