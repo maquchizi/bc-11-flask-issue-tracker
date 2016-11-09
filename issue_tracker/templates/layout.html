@@ -1,32 +1,50 @@
-<!doctype html>
+<!DOCTYPE html>
 <head>
-  <meta charset="utf-8">
-  <title>Issue Tracker</title>
-  {{ moment.include_jquery() }}
-  {{ moment.include_moment() }}
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<title>Issue Tracker</title>
+<!-- Bootstrap 3.3.6 -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/AdminLTE.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/skin-blue.css') }}">
+
+<!-- {{ moment.include_jquery() }}
+      {{ moment.include_moment() }} -->
 </head>
-<div class=page>
-  <h1>Issue Tracker</h1>
-  <div class=metanav>
-    {% if not session.user_level %}
-    <a href="{{ url_for('login') }}">Log In</a>
-    <a href="{{ url_for('register') }}">Register</a>
-    {% elif session.user_level and session.user_level == 1 %}
-    <a href="{{ url_for('dashboard') }}">All Issues</a>
-    <a href="{{ url_for('users') }}">All Users</a>
-    <a href="{{ url_for('add_user') }}">Add User</a>
-    <a href="{{ url_for('logout') }}">Log Out</a>
-    {% elif session.user_level and session.user_level == 2 %}
-    <a href="{{ url_for('dashboard') }}">My Department Issues</a>
-    <a href="{{ url_for('logout') }}">Log Out</a>
-    {% elif session.user_level and session.user_level == 3 %}
-    <a href="{{ url_for('dashboard') }}">My Issues</a>
-    <a href="{{ url_for('raise_issue') }}">Raise Issue</a>
-    <a href="{{ url_for('logout') }}">Log Out</a>
-    {% endif %}
-  </div>
-  {% for message in get_flashed_messages() %}
-  <div class=flash>{{ message }}</div>
-  {% endfor %}
-  {% block body %}{% endblock %}
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    {% include 'header.html' %}
+    {% include 'main_sidebar.html' %}
+    <div class="content-wrapper">
+    <div class=metanav>
+        {% if not session.user_level %}
+        <a href="{{ url_for('login') }}">Log In</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        {% elif session.user_level and session.user_level == 1 %}
+        <a href="{{ url_for('dashboard') }}">All Issues</a>
+        <a href="{{ url_for('users') }}">All Users</a>
+        <a href="{{ url_for('add_user') }}">Add User</a>
+        <a href="{{ url_for('logout') }}">Log Out</a>
+        {% elif session.user_level and session.user_level == 2 %}
+        <a href="{{ url_for('dashboard') }}">My Department Issues</a>
+        <a href="{{ url_for('logout') }}">Log Out</a>
+        {% elif session.user_level and session.user_level == 3 %}
+        <a href="{{ url_for('dashboard') }}">My Issues</a>
+        <a href="{{ url_for('raise_issue') }}">Raise Issue</a>
+        <a href="{{ url_for('logout') }}">Log Out</a>
+        {% endif %}
+    </div>
+    {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+    </div>
 </div>
+</body>
