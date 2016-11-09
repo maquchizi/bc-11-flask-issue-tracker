@@ -156,9 +156,9 @@ def raise_issue():
     if request.method == 'POST':
         if not request.form['description']:
             errors.append('You have to enter a description')
-        if not request.form['priority']:
+        elif not request.form['priority']:
             errors.append('You have to select a priority')
-        if not request.form['department']:
+        elif not request.form['department']:
             errors.append('You have to select a department')
         else:
             db = get_db()
@@ -277,11 +277,11 @@ def edit_user(user_id):
     if request.method == 'POST':
         if not request.form['forename']:
             errors.append('You have to enter a forename')
-        if not request.form['surname']:
+        elif not request.form['surname']:
             errors.append('You have to enter a surname')
-        if not request.form['email']:
+        elif not request.form['email']:
             errors.append('You have to enter a email address')
-        if not request.form['user_level']:
+        elif not request.form['user_level']:
             errors.append('You have to enter a user level')
         elif not request.form['email'] or \
                 '@' not in request.form['email']:

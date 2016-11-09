@@ -22,21 +22,6 @@
         {% include 'header.html' %}
         {% include 'main_sidebar.html' %}
         <div class="content-wrapper">
-        <div class=metanav>
-            {% if not session.user_level %}
-            <a href="{{ url_for('login') }}">Log In</a>
-            <a href="{{ url_for('register') }}">Register</a>
-            {% elif session.user_level and session.user_level == 1 %}
-            <a href="{{ url_for('dashboard') }}">All Issues</a>
-            <a href="{{ url_for('users') }}">All Users</a>
-            <a href="{{ url_for('add_user') }}">Add User</a>
-            {% elif session.user_level and session.user_level == 2 %}
-            <a href="{{ url_for('dashboard') }}">My Department Issues</a>
-            {% elif session.user_level and session.user_level == 3 %}
-            <a href="{{ url_for('dashboard') }}">My Issues</a>
-            <a href="{{ url_for('raise_issue') }}">Raise Issue</a>
-            {% endif %}
-        </div>
         {% for message in get_flashed_messages() %}
         <div class=flash>{{ message }}</div>
         {% endfor %}
