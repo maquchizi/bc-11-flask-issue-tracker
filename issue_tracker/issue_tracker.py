@@ -2,6 +2,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
     render_template, flash
 from werkzeug import generate_password_hash, check_password_hash
 from flask_moment import Moment
+from flask_socketio import SocketIO, emit
 import datetime
 import config
 from util import *
@@ -10,6 +11,7 @@ from issues_model import *
 app = Flask(__name__)
 app.config.from_object(config)
 moment = Moment(app)
+socketio = SocketIO(app)
 
 
 @app.before_request
@@ -96,7 +98,7 @@ def login():
         user = query_db('''SELECT * FROM users WHERE
             email = ?''', [request.form['email']], one=True)
         if not request.form['email']:
-            errors.append('You have to enter a email address')
+            errors.append('You have to enter an email address')
         elif not request.form['email'] or \
                 '@' not in request.form['email']:
             errors.append('You have to enter a valid email address')
@@ -315,5 +317,11 @@ def delete_user(user_id):
     pass
 
 
+@socketio.on('my event')
+def handle_my_custom_event(json):
+    # print('received json: ' + str(json))
+    emit('my response', json, broadcast=True)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(debug=True)

@@ -592,7 +592,3 @@ function _init() {
     }
   };
 }
-
-$(document).ready(function() {
-    $('.alert').hide();
-});
