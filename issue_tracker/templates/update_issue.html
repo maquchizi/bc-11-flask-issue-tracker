@@ -1,71 +1,83 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Update Issue</h2>
-{% for error in errors %}<p class=error><strong>Error:</strong> {{ error }}{% endfor %}
-<form action="{{ url_for('update_issue', issue_id=issue['issue_id']) }}" method=post>
-    <div>
-        <div>
-            <label>Issue Description:<p>{{ issue.description }}</p></label>
-        </div>
-        <div>
-            <label for="priority">Priority:</label>
-            <select name="priority" disabled>
-                <option value=""></option>
-                {% for priority in priorities %}
-                    {% if priority.priority_id == issue['priority'] %}
-                        <option value="{{ priority.priority_id }}" selected>{{ priority.priority_name }}</option>
-                    {% else %}
-                        <option value="{{ priority.priority_id }}">{{ priority.priority_name }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-
-        </div>
-        <div>
-            <label for="department">Department:</label>
-            <select name="department" disabled>
-                <option value=""></option>
-                {% for department in departments %}
-                    {% if department.department_id == issue['department'] %}
-                        <option value="{{ department.department_id }}" selected>{{ department.department_name }}</option>
-                    {% else %}
-                        <option value="{{ department.department_id }}">{{ department.department_name }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-
-        </div>
-        <div>
-            <label for="status">Status:</label>
-            <select name="status" readonly>
-                <option value=""></option>
-                {% for status in statuses %}
-                    {% if status.issue_status_id == issue['status'] %}
-                        <option value="{{ status.issue_status_id }}" selected>{{ status.status_name }}</option>
-                    {% else %}
-                        <option value="{{ status.issue_status_id }}">{{ status.status_name }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-
-        </div>
-        <div>
-            <label for="assigned_to">Assigned To:</label>
-            <select name="assigned_to">
-                <option value=""></option>
-                {% for rep in reps %}
-                    {% if rep.user_id == issue['assigned_to'] %}
-                        <option value="{{ rep.user_id }}" selected>{{ rep.forename +' '+ rep.surname }}</option>
-                    {% else %}
-                        <option value="{{ rep.user_id }}">{{ rep.forename +' '+ rep.surname }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-
-        </div>
-        <div>
-            <input type=submit value="Update Issue">
+<section class="content-header">
+    <h1>
+        Update Issue
+    </h1>
+</section>
+<section class="content">
+    <div class="row">
+        <!-- right column -->
+        <div class="col-md-6">
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <h4><i class="icon fa fa-ban"></i> Error!</h4>
+                {% for error in errors %}{{ error }}{% endfor %}
+              </div>
+            <!-- Horizontal Form -->
+            <div class="box box-info">
+                <form action="{{ url_for('update_issue', issue_id=issue['issue_id']) }}" method=post>
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="priority">Priority:</label>
+                            <select name="priority" class="form-control" disabled>
+                                <option value=""></option>
+                                {% for priority in priorities %}
+                                    {% if priority.priority_id == issue['priority'] %}
+                                        <option value="{{ priority.priority_id }}" selected>{{ priority.priority_name }}</option>
+                                    {% else %}
+                                        <option value="{{ priority.priority_id }}">{{ priority.priority_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department:</label>
+                            <select name="department" class="form-control" disabled>
+                                <option value=""></option>
+                                {% for department in departments %}
+                                    {% if department.department_id == issue['department'] %}
+                                        <option value="{{ department.department_id }}" selected>{{ department.department_name }}</option>
+                                    {% else %}
+                                        <option value="{{ department.department_id }}">{{ department.department_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status:</label>
+                            <select name="status" readonly class="form-control">
+                                <option value=""></option>
+                                {% for status in statuses %}
+                                    {% if status.issue_status_id == issue['status'] %}
+                                        <option value="{{ status.issue_status_id }}" selected>{{ status.status_name }}</option>
+                                    {% else %}
+                                        <option value="{{ status.issue_status_id }}">{{ status.status_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assigned_to">Assigned To:</label>
+                            <select name="assigned_to" class="form-control">
+                                <option value=""></option>
+                                {% for rep in reps %}
+                                    {% if rep.user_id == issue['assigned_to'] %}
+                                        <option value="{{ rep.user_id }}" selected>{{ rep.forename +' '+ rep.surname }}</option>
+                                    {% else %}
+                                        <option value="{{ rep.user_id }}">{{ rep.forename +' '+ rep.surname }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-info btn-md pull-right">Update Issue</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</form>
+</section>
 {% endblock %}
