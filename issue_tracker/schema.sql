@@ -79,7 +79,11 @@ INSERT INTO users (user_id, forename, surname, email, password, user_level) VALU
 ('5','Recruitment Department','Admin','recruitment@admin.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','2'),
 ('6','Sucess Department','Admin','sucess@admin.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','2'),
 ('7','Sales Department','Admin','sales@admin.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','2'),
-('8','Marketing Department','Admin','marketing@admin.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','2');
+('8','Marketing Department','Admin','marketing@admin.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','2'),
+('9','First','Client','first@client.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','3'),
+('10','Second','Client','second@client.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','3'),
+('11','First','Support Rep','first@support.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','4'),
+('12','Second','Support Rep','second@support.com','pbkdf2:sha1:1000$ylsWMEOF$3e6daf9b85463fc42dece581b7bd59242aacb704','4');
 
 INSERT INTO user_levels (user_level_id, user_level_name) VALUES ('1', 'Super Admin'),('2', 'Department Admin'),('3', 'Client'),('4', 'Support Representative');
 

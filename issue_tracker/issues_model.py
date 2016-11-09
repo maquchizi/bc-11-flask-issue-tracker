@@ -8,9 +8,11 @@ def get_all_issues():
     '''
     response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
         istbl.description,istbl.created,usrtbl.forename AS raised_forename,
-        usrtbl.surname AS raised_surname
+        usrtbl.surname AS raised_surname,isstbl.status_name
         FROM issues AS istbl INNER JOIN users AS usrtbl ON
-        istbl.raised_by = usrtbl.user_id''')
+        istbl.raised_by = usrtbl.user_id
+        INNER JOIN issue_status AS isstbl ON
+        istbl.status = isstbl.issue_status_id''')
     return response if response else False
 
 
@@ -23,9 +25,12 @@ def get_department_issues(user_id):
     if department_id:
         response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
             istbl.description,istbl.created,usrtbl.forename AS raised_forename,
-            usrtbl.surname AS raised_surname
+            usrtbl.surname AS raised_surname,isstbl.status_name
             FROM issues AS istbl INNER JOIN users AS usrtbl ON
-            istbl.raised_by = usrtbl.user_id WHERE department = ?''',
+            istbl.raised_by = usrtbl.user_id
+            INNER JOIN issue_status AS isstbl ON
+            istbl.status = isstbl.issue_status_id
+            WHERE department = ?''',
                             [department_id])
         return response if response else False
     else:
@@ -39,9 +44,11 @@ def get_my_issues(client_id):
     '''
     response = query_db('''SELECT istbl.issue_id,istbl.raised_by,
             istbl.description,istbl.created,usrtbl.forename AS raised_forename,
-            usrtbl.surname AS raised_surname
+            usrtbl.surname AS raised_surname,isstbl.status_name
             FROM issues AS istbl INNER JOIN users AS usrtbl ON
-            istbl.raised_by = usrtbl.user_id WHERE department = ?''',
+            istbl.raised_by = usrtbl.user_id
+            INNER JOIN issue_status AS isstbl ON
+            istbl.status = isstbl.issue_status_id WHERE department = ?''',
                         [client_id])
     return response if response else False
 

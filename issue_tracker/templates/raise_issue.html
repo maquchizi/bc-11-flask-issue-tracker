@@ -5,7 +5,7 @@
 <form action="{{ url_for('raise_issue') }}" method=post>
     <div>
         <div>
-            <label>Issue Description:<textarea name="description" value="{{ request.form['description'] }}"></textarea></label>
+            <label>Issue Description:<textarea name="description" value="{{ issue['description'] or request.form['description'] }}"></textarea></label>
         </div>
         <div>
             <label for="priority">Priority:</label>

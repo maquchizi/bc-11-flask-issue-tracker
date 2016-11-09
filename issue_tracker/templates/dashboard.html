@@ -8,6 +8,7 @@
             <th>Description</th>
             <th>Raised By</th>
             <th>Raised On</th>
+            <th>Status</th>
             <th colspan="2">Actions</th>
         </tr>
     </thead>
@@ -17,8 +18,10 @@
         <tr>
             <td>{{ issue.description }}</td>
             <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
-            <td>{{ issue.created }}</td>
-            <td><a href="/issues/edit/{{ issue.issue_id }}">Edit</a></td>
+            <!-- <td>{{  moment().format('MMMM Do YYYY, h:mm:ss a') }}</td> -->
+            <td>{{  issue.created }}</td>
+            <td>{{ issue.status_name }}</td>
+            <td><a href="/issues/assign/{{ issue.issue_id }}">Assign</a></td>
             <td><a href="/issues/delete/{{ issue.issue_id }}">Delete</a></td>
         </tr>
         {% endfor %}

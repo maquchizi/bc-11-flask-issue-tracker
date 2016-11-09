@@ -1,6 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, \
     render_template, flash
 from werkzeug import generate_password_hash, check_password_hash
+from flask_moment import Moment
 import datetime
 import config
 from util import *
@@ -8,6 +9,7 @@ from issues_model import *
 
 app = Flask(__name__)
 app.config.from_object(config)
+moment = Moment(app)
 
 
 @app.before_request
@@ -179,9 +181,18 @@ def raise_issue():
                            departments=departments, errors=errors)
 
 
-@app.route('/issues/edit/<issue_id>')
-def edit_issue(issue_id):
-    pass
+@app.route('/issues/assign/<issue_id>', methods=['GET', 'POST'])
+def assign_issue(issue_id):
+    errors = []
+    issue = query_db('''SELECT * FROM issues WHERE issue_id = ?''',
+                     [issue_id], one=True)
+    print issue
+    priorities = query_db('''SELECT * FROM issue_priorities''')
+    departments = query_db('''SELECT * FROM departments''')
+    reps = query_db('''SELECT * FROM users WHERE user_level = 4''')
+    return render_template('assign_issue.html', issue=issue,
+                           priorities=priorities, departments=departments,
+                           reps=reps, errors=errors)
 
 
 @app.route('/issues/delete/<issue_id>')
