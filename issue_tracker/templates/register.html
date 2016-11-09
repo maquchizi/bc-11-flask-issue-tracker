@@ -1,27 +1,48 @@
-{% extends "layout.html" %}
+{% extends "logged_out_layout.html" %}
 {% block body %}
-<h2>Register</h2>
-{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-<form action="{{ url_for('register') }}" method=post>
-    <div>
-        <div>
-            <label>Forename:<input type="text" name="forename" value="{{ request.form['forename'] }}"></label>
-        </div>
-        <div>
-            <label>Surname:<input type="text" name="surname" value="{{ request.form['surname'] }}"></label>
-        </div>
-        <div>
-            <label>Email:<input type="text" name="email" value="{{ request.form['email'] }}"></label>
-        </div>
-        <div>
-            <label>Password:<input type="password" name="password" value="{{ request.form['password'] }}"></label>
-        </div>
-        <div>
-            <label>Confirm Password:<input type="password" name="confirm_password" value="{{ request.form['confirm_password'] }}"></label>
-        </div>
-        <div>
-            <input type=submit value=Register>
-        </div>
+<div class="register-box">
+    <div class="register-logo">
+        <a href="#"> <b>t</b>
+            rckr
+        </a>
     </div>
-</form>
+    <div class="register-box-body">
+        {% if errors %}
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-ban"></i> Error!</h4>
+            {% for error in errors %}{{ error }}<br/>{% endfor %}
+        </div>
+        {% endif %}
+        <form action="{{ url_for('register') }}" method=post>
+            <div class="form-group has-feedback">
+                <input type="text" name="forename" class="form-control" placeholder="Forename" value="{{ request.form['forename'] }}"/>
+                <span class="fa fa-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="text" name="surname" class="form-control" placeholder="Surname" value="{{ request.form['surname'] }}"/>
+                <span class="fa fa-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="email" name="email" class="form-control" placeholder="Email Address" value="{{ request.form['email'] }}"/>
+                <span class="fa fa-envelope form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" name="password" class="form-control" placeholder="Password" value="{{ request.form['password'] }}"/>
+                <span class="fa fa-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" value="{{ request.form['confirm_password'] }}"/>
+                <span class="fa fa-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 pull-right">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+                </div>
+            </div>
+        </form>
+        <br>
+        <a href="{{ url_for('login') }}" class="text-center">Already have an account?</a>
+    </div>
+</div>
 {% endblock %}

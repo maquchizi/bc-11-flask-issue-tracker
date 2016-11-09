@@ -48,23 +48,23 @@ def register():
     """
     if g.user:
         return redirect(url_for('dashboard'))
-    error = None
+    errors = []
     if request.method == 'POST':
         if not request.form['forename']:
-            error = 'You have to enter a forename'
-        if not request.form['surname']:
-            error = 'You have to enter a surname'
-        if not request.form['email']:
-            error = 'You have to enter a email address'
+            errors.append('You have to enter a forename')
+        elif not request.form['surname']:
+            errors.append('You have to enter a surname')
+        elif not request.form['email']:
+            errors.append('You have to enter an email address')
         elif not request.form['email'] or \
                 '@' not in request.form['email']:
-            error = 'You have to enter a valid email address'
+            errors.append('You have to enter a valid email address')
         elif not request.form['password']:
-            error = 'You have to enter a password'
+            errors.append('You have to enter a password')
         elif request.form['password'] != request.form['confirm_password']:
-            error = 'The two passwords do not match'
+            errors.append('The two passwords do not match')
         elif user_exists(request.form['email']):
-            error = 'That email address is already taken'
+            errors.append('That email address is already taken')
         else:
             db = get_db()
             db.execute('''INSERT INTO users (
@@ -81,7 +81,7 @@ def register():
             # Send flash message
             flash('You were successfully registered and can login now')
             return redirect(url_for('dashboard'))
-    return render_template('register.html', error=error)
+    return render_template('register.html', errors=errors)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -91,26 +91,26 @@ def login():
     """
     if g.user:
         return redirect(url_for('dashboard'))
-    error = None
+    errors = []
     if request.method == 'POST':
         user = query_db('''SELECT * FROM users WHERE
             email = ?''', [request.form['email']], one=True)
         if not request.form['email']:
-            error = 'You have to enter a email address'
+            errors.append('You have to enter a email address')
         elif not request.form['email'] or \
                 '@' not in request.form['email']:
-            error = 'You have to enter a valid email address'
+            errors.append('You have to enter a valid email address')
         elif not request.form['password']:
-            error = 'You have to enter a password'
+            errors.append('You have to enter a password')
         elif user is None or not check_password_hash(user['password'],
                                                      request.form['password']):
-            error = 'Invalid credentials'
+            errors.append('Invalid credentials')
         else:
             flash('You were logged in')
             session['user_id'] = user['user_id']
             session['user_level'] = user['user_level']
             return redirect(url_for('dashboard'))
-    return render_template('login.html', error=error)
+    return render_template('login.html', errors=errors)
 
 
 @app.route('/logout')

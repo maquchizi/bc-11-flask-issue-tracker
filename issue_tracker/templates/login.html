@@ -1,18 +1,36 @@
-{% extends "layout.html" %}
+{% extends "logged_out_layout.html" %}
 {% block body %}
-<h2>Login</h2>
-{% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-<form action="{{ url_for('login') }}" method=post>
-    <div>
-        <div>
-            <label>Email:<input type="text" name="email" value="{{ request.form['email'] }}"></label>
-        </div>
-        <div>
-            <label>Password:<input type="password" name="password" value="{{ request.form['password'] }}"></label>
-        </div>
-        <div>
-            <input type=submit value=Login>
-        </div>
+<div class="login-box">
+    <div class="login-logo">
+        <a href="#"> <b>t</b>
+            rckr
+        </a>
     </div>
-</form>
+    <div class="login-box-body">
+        {% if errors %}
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-ban"></i> Error!</h4>
+            {% for error in errors %}{{ error }}{% endfor %}
+        </div>
+        {% endif %}
+        <form action="{{ url_for('login') }}" method=post>
+            <div class="form-group has-feedback">
+                <input type="email" name="email" class="form-control" placeholder="Email" value="{{ request.form['email'] }}"/>
+                <span class="fa fa-envelope form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" name="password" class="form-control" placeholder="Password" value="{{ request.form['password'] }}"/>
+                <span class="fa fa-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 pull-right">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div>
+            </div>
+        </form>
+        <br>
+        <a href="{{ url_for('register') }}" class="text-center">Register a new account</a>
+    </div>
+</div>
 {% endblock %}

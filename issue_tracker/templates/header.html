@@ -53,7 +53,7 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="{{ url_for('static', filename='img/avatar.png')}}" class="user-image" alt="User Image">
-                        <span class="hidden-xs">Test User</span>
+                        <span class="hidden-xs">{{ g.user['forename'] +' '+ g.user['surname'] }}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
@@ -61,31 +61,13 @@
                             <img src="{{ url_for('static', filename='img/avatar.png')}}"g" class="img-circle" alt="User Image">
 
                             <p>
-                                Test User - Web Developer
+                                {{ g.user['forename'] +' '+ g.user['surname'] }} - Web Developer
                                 <small>Member since Nov. 2016</small>
                             </p>
                         </li>
-                        <!-- Menu Body -->
-                        <li class="user-body">
-                            <div class="row">
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Followers</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Sales</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Friends</a>
-                                </div>
-                            </div>
-                            <!-- /.row --> </li>
-                        <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
-                            </div>
-                            <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                <a href="{{ url_for('logout') }}" class="btn btn-primary btn-flat">Sign out</a>
                             </div>
                         </li>
                     </ul>
