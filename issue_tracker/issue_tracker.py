@@ -175,24 +175,42 @@ def raise_issue():
             # Send flash message
             flash('You have raised a new issue')
             return redirect(url_for('dashboard'))
+
     priorities = query_db('''SELECT * FROM issue_priorities''')
     departments = query_db('''SELECT * FROM departments''')
     return render_template('raise_issue.html', priorities=priorities,
                            departments=departments, errors=errors)
 
 
-@app.route('/issues/assign/<issue_id>', methods=['GET', 'POST'])
-def assign_issue(issue_id):
+@app.route('/issues/update/<issue_id>', methods=['GET', 'POST'])
+def update_issue(issue_id):
     errors = []
     issue = query_db('''SELECT * FROM issues WHERE issue_id = ?''',
                      [issue_id], one=True)
-    print issue
+    if request.method == 'POST':
+        if request.form['status'] < 0:
+            status = issue['status']
+        else:
+            status = request.form['status']
+        if not request.form['status']:
+            errors.append('You have to select a status')
+        else:
+            db = get_db()
+            db.execute('''UPDATE issues SET assigned_to = ?, status = ?
+                    WHERE issue_id = ?''',
+                       [request.form['assigned_to'], status, issue_id])
+            db.commit()
+            # Send flash message
+            flash('You have assigned the issue')
+            return redirect(url_for('dashboard'))
+
     priorities = query_db('''SELECT * FROM issue_priorities''')
     departments = query_db('''SELECT * FROM departments''')
     reps = query_db('''SELECT * FROM users WHERE user_level = 4''')
-    return render_template('assign_issue.html', issue=issue,
+    statuses = query_db('''SELECT * FROM issue_status''')
+    return render_template('update_issue.html', issue=issue,
                            priorities=priorities, departments=departments,
-                           reps=reps, errors=errors)
+                           reps=reps, statuses=statuses, errors=errors)
 
 
 @app.route('/issues/delete/<issue_id>')

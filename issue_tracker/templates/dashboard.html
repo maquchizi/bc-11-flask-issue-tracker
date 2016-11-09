@@ -21,8 +21,8 @@
             <!-- <td>{{  moment().format('MMMM Do YYYY, h:mm:ss a') }}</td> -->
             <td>{{  issue.created }}</td>
             <td>{{ issue.status_name }}</td>
-            <td><a href="/issues/assign/{{ issue.issue_id }}">Assign</a></td>
-            <td><a href="/issues/delete/{{ issue.issue_id }}">Delete</a></td>
+            <td><a href="/issues/update/{{ issue.issue_id }}">Update</a></td>
+            <!-- <td><a href="/issues/delete/{{ issue.issue_id }}">Delete</a></td> -->
         </tr>
         {% endfor %}
 
