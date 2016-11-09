@@ -153,14 +153,18 @@ def dashboard():
 @app.route('/issues/raise', methods=['GET', 'POST'])
 def raise_issue():
     errors = []
+    valid = False
     if request.method == 'POST':
         if not request.form['description']:
             errors.append('You have to enter a description')
-        elif not request.form['priority']:
+        if not request.form['priority']:
             errors.append('You have to select a priority')
-        elif not request.form['department']:
+        if not request.form['department']:
             errors.append('You have to select a department')
         else:
+            valid = True
+
+        if valid:
             db = get_db()
             db.execute('''INSERT INTO issues (
               description, priority, department, raised_by, created, modified)
