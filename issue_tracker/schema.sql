@@ -92,3 +92,5 @@ INSERT INTO issue_priorities (priority_name) VALUES ('Low'),('Medium'),('High');
 INSERT INTO issue_status (issue_status_id, status_name) VALUES ('1', 'Open'),('2', 'In-Progress'),('3', 'Closed');
 
 INSERT INTO departments (department_name, department_admin) VALUES ('Operations','2'),('Finance','3'),('Training','4'),('Recruitment','5'),('Success','6'),('Sales','7'),('Marketing','8');
+
+INSERT INTO issues (description, department, priority, raised_by) VALUES ('This is the first issue','2','1','9'),('Second issue raised on the system','3','3','10');
