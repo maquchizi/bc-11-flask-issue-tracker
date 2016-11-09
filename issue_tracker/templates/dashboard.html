@@ -1,34 +1,49 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Dashboard</h2>
-{% if issues %}
-<table class="table">
-    <thead>
-        <tr>
-            <th>Description</th>
-            <th>Raised By</th>
-            <th>Raised On</th>
-            <th>Status</th>
-            <th colspan="2">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-
-        {% for issue in issues %}
-        <tr>
-            <td>{{ issue.description }}</td>
-            <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
-            <!-- <td>{{  moment().format('MMMM Do YYYY, h:mm:ss a') }}</td> -->
-            <td>{{  issue.created }}</td>
-            <td>{{ issue.status_name }}</td>
-            <td><a href="/issues/update/{{ issue.issue_id }}">Update</a></td>
-            <!-- <td><a href="/issues/delete/{{ issue.issue_id }}">Delete</a></td> -->
-        </tr>
-        {% endfor %}
-
-    </tbody>
-</table>
-{% else %}
-    <p>You haven't raised any issues. Maybe you should <a href="{{ url_for('raise_issue') }}">raise one</a></p>
-{% endif %}
+<section class="content-header">
+    <h1>
+        Dashboard
+    </h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Issues</h3>
+                </div>
+                <div class="box-body">
+                    {% if issues %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Raised By</th>
+                                    <th>Raised On</th>
+                                    <th>Status</th>
+                                    <th colspan="2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for issue in issues %}
+                                <tr>
+                                    <td>{{ issue.description }}</td>
+                                    <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
+                                    <td>{{  issue.created }}</td>
+                                    <td>{{ issue.status_name }}</td>
+                                    <td>
+                                        <a href="/issues/update/{{ issue.issue_id }}">Update</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>You haven't raised any issues. Maybe you should <a href="{{ url_for('raise_issue') }}">raise one</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

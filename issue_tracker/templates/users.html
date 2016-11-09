@@ -1,27 +1,41 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Users</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Added</th>
-            <th>User Level</th>
-            <th colspan="2">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.forename +' '+ user.surname }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.created }}</td>
-            <td>{{ user.user_level_name }}</td>
-            <td><a href="/users/edit/{{ user.user_id }}">Edit</a></td>
-            <td><a href="/users/delete/{{ user.user_id }}">Delete</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<section class="content-header">
+    <h1>
+        Users
+    </h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Added</th>
+                                <th>User Level</th>
+                                <th colspan="2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.forename +' '+ user.surname }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.created }}</td>
+                                <td>{{ user.user_level_name }}</td>
+                                <td><a href="/users/edit/{{ user.user_id }}">Edit</a></td>
+                                <td><a href="/users/delete/{{ user.user_id }}">Delete</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
