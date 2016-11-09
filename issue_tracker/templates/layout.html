@@ -4,13 +4,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <title>Issue Tracker</title>
-<!-- Bootstrap 3.3.6 -->
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-<!-- Ionicons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-<!-- Theme style -->
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/AdminLTE.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/skin-purple.css') }}">
 
@@ -32,9 +27,9 @@
         {% include 'header.html' %}
         {% include 'main_sidebar.html' %}
         <div class="content-wrapper">
-        {% for message in get_flashed_messages() %}
+        <!-- {% for message in get_flashed_messages() %}
         <div class=flash>{{ message }}</div>
-        {% endfor %}
+        {% endfor %} -->
         {% block body %}{% endblock %}
         </div>
     </div>

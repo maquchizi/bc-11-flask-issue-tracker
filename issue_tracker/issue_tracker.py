@@ -2,7 +2,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
     render_template, flash
 from werkzeug import generate_password_hash, check_password_hash
 from flask_moment import Moment
-from flask_socketio import SocketIO, emit
+from flask_socketio import *
 import datetime
 import config
 from util import *
