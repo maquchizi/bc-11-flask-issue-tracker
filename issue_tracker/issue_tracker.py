@@ -337,11 +337,8 @@ def handle_user_join(json):
         Called when a user logs in
         The default name of the room is the user's user_id
     '''
-    # print json['data']
-    # forename = user[1]
     room = json['data']
     join_room(room)
-    # send('Someone has entered your room.', room=room)
 
 
 if __name__ == "__main__":
