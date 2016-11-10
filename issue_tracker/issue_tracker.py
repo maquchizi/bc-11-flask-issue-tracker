@@ -108,7 +108,10 @@ def login():
                                                      request.form['password']):
             errors.append('Invalid credentials')
         else:
-            flash('You were logged in')
+            '''
+                Call function to join a socket.io room
+                Send it the user info
+            '''
             session['user_id'] = user['user_id']
             session['user_level'] = user['user_level']
             return redirect(url_for('dashboard'))
@@ -319,7 +322,6 @@ def delete_user(user_id):
 
 @socketio.on('my event')
 def handle_my_custom_event(json):
-    # print('received json: ' + str(json))
     emit('my response', json, broadcast=True)
 
 
