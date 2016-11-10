@@ -72,3 +72,13 @@ def is_department_admin(user_id):
                         WHERE department_admin = ?''',
                         [user_id], one=True)
     return response[0] if response else False
+
+
+def get_department_admin(department_id):
+    '''
+        Get the user_id of a department admin given the deparment_id
+    '''
+    response = query_db('''SELECT department_admin FROM departments
+                        WHERE department_id = ?''',
+                        [department_id], one=True)
+    return response[0] if response else False

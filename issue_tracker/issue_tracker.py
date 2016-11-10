@@ -37,7 +37,9 @@ def teardown_request(exception):
 
 @app.cli.command('initdb')
 def initdb_command():
-    """Creates the database tables."""
+    """
+        Creates the database tables
+    """
     init_db()
     print('Initialized the database')
 
@@ -108,10 +110,6 @@ def login():
                                                      request.form['password']):
             errors.append('Invalid credentials')
         else:
-            '''
-                Call function to join a socket.io room
-                Send it the user info
-            '''
             session['user_id'] = user['user_id']
             session['user_level'] = user['user_level']
             return redirect(url_for('dashboard'))
@@ -181,8 +179,14 @@ def raise_issue():
                         datetime.datetime.utcnow(),
                         datetime.datetime.utcnow()])
             db.commit()
-            # Send flash message
-            flash('You have raised a new issue')
+
+            '''
+                Send notification to department admin
+            '''
+            department_admin = get_department_admin(department_id)
+            socketio.send('A new issue was raised on the system',
+                          room=department_admin)
+
             return redirect(url_for('dashboard'))
 
     priorities = query_db('''SELECT * FROM issue_priorities''')
@@ -209,8 +213,13 @@ def update_issue(issue_id):
                     WHERE issue_id = ?''',
                        [request.form['assigned_to'], status, issue_id])
             db.commit()
-            # Send flash message
-            flash('You have assigned the issue')
+
+            '''
+                When if the issue status was changed, send a notification
+                to the person who raised the issue
+            '''
+            socketio.send('Issue status changed', room=issue['raised_by'])
+
             return redirect(url_for('dashboard'))
 
     priorities = query_db('''SELECT * FROM issue_priorities''')
@@ -229,11 +238,11 @@ def delete_issue(issue_id):
 
 @app.route('/users')
 def users():
-    users = query_db('''SELECT usrtbl.user_id,usrtbl.forename,usrtbl.surname,
-        usrtbl.email,usrtbl.created,
-        usrtbl.user_level,ultbl.user_level_name FROM users as usrtbl
+    users = query_db('''SELECT usertbl.user_id,usertbl.forename,
+        usertbl.surname,usertbl.email,usertbl.created,
+        usertbl.user_level,ultbl.user_level_name FROM users as usertbl
         INNER JOIN user_levels AS ultbl
-        ON usrtbl.user_level = ultbl.user_level_id''')
+        ON usertbl.user_level = ultbl.user_level_id''')
     return render_template('users.html', users=users)
 
 
@@ -272,8 +281,6 @@ def add_user():
                                          datetime.datetime.utcnow(),
                                          datetime.datetime.utcnow()])
             db.commit()
-            # Send flash message
-            flash('You have added a new user')
             return redirect(url_for('users'))
     user_levels = query_db('''SELECT * FROM user_levels''')
     return render_template('add_user.html',
@@ -305,11 +312,9 @@ def edit_user(user_id):
                         request.form['user_level'],
                         datetime.datetime.utcnow(), user_id])
             db.commit()
-            # Send flash message
-            flash('You have updated the user details')
             return redirect(url_for('users'))
     user_levels = query_db('''SELECT * FROM user_levels''')
-    user = query_db('''SELECT * FROM users as usrtbl WHERE user_id = ?''',
+    user = query_db('''SELECT * FROM users as usertbl WHERE user_id = ?''',
                     user_id, one=True)
     return render_template('edit_user.html', user=user,
                            user_levels=user_levels, errors=errors)
@@ -323,6 +328,20 @@ def delete_user(user_id):
 @socketio.on('my event')
 def handle_my_custom_event(json):
     emit('my response', json, broadcast=True)
+
+
+@socketio.on('join')
+def handle_user_join(json):
+    '''
+        Join a socket.io room
+        Called when a user logs in
+        The default name of the room is the user's user_id
+    '''
+    # print json['data']
+    # forename = user[1]
+    room = json['data']
+    join_room(room)
+    send('Someone has entered your room.', room=room)
 
 
 if __name__ == "__main__":
