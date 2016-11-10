@@ -7,6 +7,12 @@ import datetime
 import config
 from util import *
 from issues_model import *
+import os
+
+
+port = int(os.environ.get("PORT", 5000))
+
+print port
 
 app = Flask(__name__)
 app.config.from_object(config)
