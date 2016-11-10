@@ -50,6 +50,11 @@ def initdb_command():
     print('Initialized the database')
 
 
+@app.route('/')
+def index():
+    return redirect(url_for('dashboard'))
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """
