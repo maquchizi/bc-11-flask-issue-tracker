@@ -27,8 +27,9 @@
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.created }}</td>
                                 <td>{{ user.user_level_name }}</td>
-                                <td><a href="/users/edit/{{ user.user_id }}">Edit</a></td>
-                                <td><a href="/users/delete/{{ user.user_id }}">Delete</a></td>
+                                <td><a href="/users/edit/{{ user.user_id }}" title="Edit User"><i class="fa fa-pencil"></i></a></td>
+                                <!-- <td><a href="/users/delete/{{ user.user_id }}">Delete</a></td> -->
+                                <td><a href="#" title="Delete"><i class="fa fa-trash"></i></a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
