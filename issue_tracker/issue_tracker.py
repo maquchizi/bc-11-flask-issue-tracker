@@ -183,7 +183,7 @@ def raise_issue():
             '''
                 Send notification to department admin
             '''
-            department_admin = get_department_admin(department_id)
+            department_admin = get_department_admin(request.form['department'])
             socketio.send('A new issue was raised on the system',
                           room=department_admin)
 
@@ -341,7 +341,7 @@ def handle_user_join(json):
     # forename = user[1]
     room = json['data']
     join_room(room)
-    send('Someone has entered your room.', room=room)
+    # send('Someone has entered your room.', room=room)
 
 
 if __name__ == "__main__":
