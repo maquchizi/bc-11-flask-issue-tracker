@@ -347,5 +347,5 @@ def handle_user_join(json):
     join_room(room)
 
 
-if __name__ == "__main__":
-    socketio.run(debug=True)
+# if __name__ == "__main__":
+#     socketio.run(port=8080, debug=False)
