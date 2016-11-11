@@ -26,15 +26,23 @@
                             </thead>
                             <tbody>
                                 {% for issue in issues %}
-                                <tr>
-                                    <td>{{ issue.description }}</td>
-                                    <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
-                                    <td>{{  issue.created }}</td>
-                                    <td>{{ issue.status_name }}</td>
-                                    <td>
-                                        <a href="/issues/update/{{ issue.issue_id }}" title="Update Issue"><i class="fa fa-pencil"></i></a>
-                                    </td>
-                                </tr>
+                                    {% if issue.status_name == 'Open' %}
+                                        <tr style="color: red;">
+                                    {% elif issue.status_name == 'In-Progress' %}
+                                        <tr style="color: orange;">
+                                    {% elif issue.status_name == 'Closed' %}
+                                        <tr style="color: green;">
+                                    {% else %}
+                                        <tr>
+                                    {% endif %}
+                                        <td>{{ issue.description }}</td>
+                                        <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
+                                        <td>{{  issue.created }}</td>
+                                        <td>{{ issue.status_name }}</td>
+                                        <td>
+                                            <a href="/issues/update/{{ issue.issue_id }}" title="Update Issue"><i class="fa fa-pencil"></i></a>
+                                        </td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
