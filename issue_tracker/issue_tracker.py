@@ -352,5 +352,14 @@ def handle_user_join(json):
     join_room(room)
 
 
+<<<<<<< HEAD
 # if __name__ == "__main__":
 #     socketio.run(port=8080, debug=False)
+=======
+if __name__ == "__main__":
+    '''
+        This is overriden by the socketio initialisation
+        I'll still keep it here though
+    '''
+    socketio.run(debug=True)
+>>>>>>> develop
