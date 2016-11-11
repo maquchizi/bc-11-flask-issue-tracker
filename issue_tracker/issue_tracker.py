@@ -347,4 +347,8 @@ def handle_user_join(json):
 
 
 if __name__ == "__main__":
+    '''
+        This is overriden by the socketio initialisation
+        I'll still keep it here though
+    '''
     socketio.run(debug=True)
