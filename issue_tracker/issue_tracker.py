@@ -7,16 +7,12 @@ import datetime
 import config
 from util import *
 from issues_model import *
-import os
 
-
-port = int(os.environ.get("PORT", 5000))
-
-print port
 
 app = Flask(__name__)
 app.config.from_object(config)
 moment = Moment(app)
+# App initialises here
 socketio = SocketIO(app)
 
 
@@ -352,5 +348,6 @@ def handle_user_join(json):
     join_room(room)
 
 
+# Removing this as it is overridden by the socketio initialisation
 # if __name__ == "__main__":
 #     socketio.run(port=8080, debug=False)
