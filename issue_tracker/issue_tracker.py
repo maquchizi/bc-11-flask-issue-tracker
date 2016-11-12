@@ -7,6 +7,12 @@ import datetime
 import config
 from util import *
 from issues_model import *
+import os
+
+
+port = int(os.environ.get("PORT", 5000))
+
+print port
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -346,9 +352,5 @@ def handle_user_join(json):
     join_room(room)
 
 
-if __name__ == "__main__":
-    '''
-        This is overriden by the socketio initialisation
-        I'll still keep it here though
-    '''
-    socketio.run(debug=True)
+# if __name__ == "__main__":
+#     socketio.run(port=8080, debug=False)
