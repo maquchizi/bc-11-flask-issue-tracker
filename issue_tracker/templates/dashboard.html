@@ -39,9 +39,15 @@
                                         <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
                                         <td>{{  issue.created }}</td>
                                         <td>{{ issue.status_name }}</td>
-                                        <td>
-                                            <a href="/issues/update/{{ issue.issue_id }}" title="Update Issue"><i class="fa fa-pencil"></i></a>
-                                        </td>
+                                        {% if g.user['user_level'] == 1 %}
+                                            <td>
+                                                <a href="/issues/update/{{ issue.issue_id }}" title="Update Issue"><i class="fa fa-pencil"></i></a>
+                                            </td>
+                                        {% else %}
+                                            <td>
+                                                <a href="/issues/details/{{ issue.issue_id }}" title="Details"><i class="fa fa-eye"></i></a>
+                                            </td>
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -49,6 +55,30 @@
                     {% else %}
                         <p>You haven't raised any issues. Maybe you should <a href="{{ url_for('raise_issue') }}">raise one</a></p>
                     {% endif %}
+                </div>
+                <div class="modal fade" id="issueDetailsModal" tabindex="-1" role="dialog" aria-labelledby="issueDetailsModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="issueDetailsModalLabel">Issue Details</h4>
+                            </div>
+                            <div class="modal-body">
+                                <<ul>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
