@@ -37,7 +37,7 @@
                                     {% endif %}
                                         <td>{{ issue.description }}</td>
                                         <td>{{ issue.raised_forename +' '+ issue.raised_surname }}</td>
-                                        <td>{{  issue.created }}</td>
+                                        <td>{{ issue.created }}</td>
                                         <td>{{ issue.status_name }}</td>
                                         {% if g.user['user_level'] == 1 %}
                                             <td>

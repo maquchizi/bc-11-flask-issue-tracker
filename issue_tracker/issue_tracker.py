@@ -157,6 +157,10 @@ def dashboard():
         issues = get_my_issues(user_id)
     elif(g.user['user_level'] == 4):
         issues = get_assigned_issues(user_id)
+    # print issues
+    # for issue in issues:
+    #     print type(issue['created'])
+    #     datetime.datetime.strptime(issue['created'], '%Y-%m-%d %H:%M:%S.%f')
     return render_template('dashboard.html', issues=issues)
 
 
