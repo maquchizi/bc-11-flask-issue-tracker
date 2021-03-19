@@ -5,7 +5,7 @@ Flask-Moment==0.5.1
 Flask-SocketIO==2.7.2
 greenlet==0.4.10
 itsdangerous==0.24
-Jinja2==2.8
+Jinja2==2.11.3
 MarkupSafe==0.23
 python-engineio==3.8.2.post1
 python-socketio==1.6.0
